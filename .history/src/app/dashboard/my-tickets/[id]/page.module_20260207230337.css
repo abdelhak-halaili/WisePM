@@ -1,0 +1,135 @@
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 2rem;
+  overflow: hidden;
+}
+
+.header {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.backBtn:hover {
+  color: var(--foreground);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.typeBadge {
+  background: var(--surface-hover);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+/* Layout - mimicking the Wizard Fixed Layout */
+.layout {
+  display: flex;
+  flex: 1;
+  gap: 0;
+  border-top: 1px solid var(--border);
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.mainPanel {
+  flex: 3;
+  overflow-y: auto;
+  padding: 2rem;
+  padding-right: 3rem;
+  height: 100%;
+}
+
+.sidePanel {
+  flex: 1;
+  overflow-y: auto;
+  height: 100%;
+  padding: 2rem;
+  border-left: 1px solid var(--border);
+  background: var(--surface-hover);
+  min-width: 320px;
+}
+
+.document {
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Markdown Styles */
+.markdownBody {
+  line-height: 1.7;
+  color: var(--foreground);
+}
+
+.markdownBody h1, .markdownBody h2, .markdownBody h3 {
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.markdownBody h1 { font-size: 1.75rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
+.markdownBody h2 { font-size: 1.4rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
+.markdownBody h3 { font-size: 1.2rem; }
+
+.markdownBody p { margin-bottom: 1em; }
+.markdownBody ul, .markdownBody ol { margin-bottom: 1em; padding-left: 1.5em; }
+.markdownBody hr { border: 0; height: 1px; background: var(--border); margin: 3rem 0; }
+
+.embeddedImage {
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  margin: 1.5rem 0;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Advisor */
+.advisorBox {
+  padding: 1rem;
+}
+
+.advisorTitle {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: #dfaa09;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 200, 0, 0.2);
+}
+
+.missingContent {
+  font-size: 0.9rem;
+  color: var(--foreground);
+  opacity: 0.9;
+}

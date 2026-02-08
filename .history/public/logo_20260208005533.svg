@@ -1,0 +1,15 @@
+<svg width="600" height="200" viewBox="0 0 600 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Content Container (Centers content) -->
+  <g transform="translate(140, 60)">
+      <!-- 'Wise' Text -->
+      <text x="0" y="55" font-family="Inter, Roboto, Arial, sans-serif" font-weight="bold" font-size="70" fill="#ffffff" letter-spacing="-1">
+        Wise
+      </text>
+      
+      <!-- 'PM' Badge -->
+      <rect x="180" y="-10" width="130" height="90" rx="12" fill="#dfaa09" />
+      <text x="245" y="55" text-anchor="middle" font-family="Inter, Roboto, Arial, sans-serif" font-weight="900" font-size="60" fill="#1e293b" letter-spacing="-2">
+        PM
+      </text>
+  </g>
+</svg>

@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+/// User profile linked to Supabase Auth
+model UserProfile {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  fullName  String?
+  avatarUrl String?
+  
+  workflows Workflow[]
+  documents Document[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("profiles") // Map to 'profiles' table in Supabase
+}
+
+/// A guided product management workflow (e.g., "PRD Writing")
+model Workflow {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  status      String   @default("draft") // draft, in-progress, completed
+  
+  // JSONB field to store flexible workflow steps/data
+  steps       Json     @default("[]") 
+  
+  userId      String
+  user        UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  documents   Document[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("workflows")
+}
+
+/// Generated output from a workflow
+model Document {
+  id          String   @id @default(uuid())
+  title       String
+  content     String   // Markdown content
+  
+  workflowId  String?
+  workflow    Workflow? @relation(fields: [workflowId], references: [id])
+  
+  userId      String
+  user        UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("documents")
+}

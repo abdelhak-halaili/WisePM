@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// User profile linked to Supabase Auth
+model UserProfile {
+  id        String   @id // Matches Supabase Auth ID
+  email     String   @unique
+  fullName  String?
+  avatarUrl String?
+  
+  workflows Workflow[]
+  documents Document[]
+  tickets   Ticket[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("profiles")
+}
+
+/// A guided product management workflow (e.g., "PRD Writing")
+model Workflow {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  status      String   @default("draft") // draft, in-progress, completed
+  
+  // JSONB field to store flexible workflow steps/data
+  steps       Json     @default("[]") 
+  
+  userId      String
+  user        UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  documents   Document[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("workflows")
+}
+
+/// Generated output from a workflow
+model Document {
+  id          String   @id @default(uuid())
+  title       String
+  content     String   // Markdown content
+  
+  workflowId  String?
+  workflow    Workflow? @relation(fields: [workflowId], references: [id])
+  
+  userId      String
+  user        UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("documents")
+}
+
+/// AI Generated Tickets
+model Ticket {
+  id              String   @id @default(uuid())
+  title           String
+  type            String   // Feature, Bug, etc.
+  status          String   @default("draft") // draft, saved
+  
+  content         String   // The core markdown content
+  missingElements String?  // AI feedback/critique
+  
+  // Metadata for context (platforms, formats, screenshots?)
+  metadata        Json     @default("{}")
+
+  userId          String
+  user            UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("tickets")
+}

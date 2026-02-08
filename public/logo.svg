@@ -1,0 +1,13 @@
+<svg width="330" height="85" viewBox="0 0 330 85" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 'Wise' Text -->
+  <text x="0" y="62" font-family="Inter, Roboto, Arial, sans-serif" font-weight="bold" font-size="70" fill="#ffffff" letter-spacing="-1">
+    Wise
+  </text>
+  
+  <!-- 'PM' Badge -->
+  <!-- Shifted left to match tight spacing -->
+  <rect x="175" y="0" width="130" height="85" rx="12" fill="#dfaa09" />
+  <text x="240" y="62" text-anchor="middle" font-family="Inter, Roboto, Arial, sans-serif" font-weight="900" font-size="60" fill="#1e293b" letter-spacing="-2">
+    PM
+  </text>
+</svg>
