@@ -1,0 +1,133 @@
+
+'use server';
+
+import { createClient } from '@/utils/supabase/server';
+import prisma from '@/utils/prisma';
+import { getJiraProjects, getJiraIssueTypes, createJiraIssue, refreshAccessToken } from '@/lib/jira';
+import { revalidatePath } from 'next/cache';
+
+async function getJiraIntegration(userId: string) {
+  return prisma.integration.findUnique({
+    where: {
+      userId_provider: {
+        userId,
+        provider: 'jira',
+      },
+    },
+  });
+}
+
+async function ensureValidToken(integration: any) {
+  const needsRefresh = integration.expiresAt && (Date.now() / 1000) > (integration.expiresAt - 60); // Refresh if exp is within 60s
+  
+  if (needsRefresh && integration.refreshToken) {
+    console.log('Refreshing Jira Access Token...');
+    try {
+      const tokens = await refreshAccessToken(integration.refreshToken);
+      const { access_token, refresh_token, expires_in } = tokens;
+      
+      const updated = await prisma.integration.update({
+        where: { id: integration.id },
+        data: {
+          accessToken: access_token,
+          refreshToken: refresh_token || integration.refreshToken, // Sometimes refresh token doesn't rotate
+          expiresAt: Math.floor(Date.now() / 1000) + expires_in,
+        },
+      });
+      return updated;
+    } catch (e) {
+      console.error('Failed to refresh token', e);
+      throw new Error('Jira session expired. Please reconnect.');
+    }
+  }
+  return integration;
+}
+
+export async function getJiraIntegrationStatus() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const integration = await getJiraIntegration(user.id);
+  if (!integration) return null;
+
+  return {
+    isConnected: true,
+    cloudId: integration.cloudId,
+  };
+}
+
+export async function listJiraProjects() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
+  let integration = await getJiraIntegration(user.id);
+  if (!integration) throw new Error('Jira not connected');
+
+  integration = await ensureValidToken(integration);
+
+  return await getJiraProjects(integration.accessToken, integration.cloudId!);
+}
+
+export async function listJiraIssueTypes(projectId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
+  let integration = await getJiraIntegration(user.id);
+  if (!integration) throw new Error('Jira not connected');
+
+  integration = await ensureValidToken(integration);
+
+  return await getJiraIssueTypes(integration.accessToken, integration.cloudId!, projectId);
+}
+
+export async function createIssueInJira(ticketData: any, jiraProjectId: string, jiraIssueTypeId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
+  let integration = await getJiraIntegration(user.id);
+  if (!integration) throw new Error('Jira not connected');
+
+  integration = await ensureValidToken(integration);
+
+  // Construct Jira Issue Payload
+  // Note: ADF (Atlassian Document Format) is complex. 
+  // For simplicity, we'll try to use the 'description' field with valid ADF or just plain string if supported (Jira usually enforces ADF for description).
+  // A simple ADF paragraph:
+  const adfDescription = {
+    type: "doc",
+    version: 1,
+    content: [
+      {
+        type: "paragraph",
+        content: [
+          {
+            type: "text",
+            text: ticketData.content || ticketData.description || "No content"
+          }
+        ]
+      }
+    ]
+  };
+
+  const payload = {
+    fields: {
+      project: {
+        id: jiraProjectId
+      },
+      summary: ticketData.title,
+      description: adfDescription,
+      issuetype: {
+        id: jiraIssueTypeId
+      }
+    }
+  };
+
+  console.log('Sending Jira Payload:', JSON.stringify(payload, null, 2));
+
+  const result = await createJiraIssue(integration.accessToken, integration.cloudId!, payload);
+  return result; // Returns { id: "10000", key: "PROD-123", self: "..." }
+}
