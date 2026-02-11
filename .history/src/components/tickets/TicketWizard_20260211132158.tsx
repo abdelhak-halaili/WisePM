@@ -576,6 +576,7 @@ export default function TicketWizard() {
                         {isSaving ? <Loader2 size={16} className={styles.spin} /> : <Check size={16} />}
                         Save to My Tickets
                     </button>
+                </div>
             </div>
         </div>
     )
