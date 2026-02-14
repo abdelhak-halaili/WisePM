@@ -17,7 +17,7 @@ export default function Hero() {
         </div>
         
         <h1 className="text-5xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-6 max-w-4xl mx-auto leading-tight">
-          Turn Chaos into <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Structured Tickets</span> in Seconds.
+          Stop Wasting Hours <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Writing Jira Tickets</span> from Scratch.
         </h1>
         
         <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
