@@ -5,7 +5,7 @@ const features = [
   {
     icon: Sparkles,
     title: 'AI-Powered Specifications',
-    description: 'Transform a single sentence into a comprehensive PRD with user stories, acceptance criteria, and technical notes.',
+    description: 'Transform a single sentence into a comprehensive ticket with user stories, acceptance criteria, and technical notes.',
     color: 'indigo'
   },
   {
