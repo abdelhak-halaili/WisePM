@@ -17,11 +17,11 @@ export default function Hero() {
         </div>
         
         <h1 className="text-5xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-6 max-w-4xl mx-auto leading-tight">
-          Stop Wasting Hours <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Writing Jira Tickets</span> from Scratch.
+          Stop Wasting Hours <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Writing Tickets</span> from Scratch.
         </h1>
         
         <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-          Stop staring at blank pages. WisePM uses AI to generate comprehensive tickets, user stories, and acceptance criteria based on your rough ideas.
+          WisePM uses AI to generate comprehensive tickets, user stories, and acceptance criteria based on your rough ideas.
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
