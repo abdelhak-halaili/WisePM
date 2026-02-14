@@ -5,7 +5,7 @@ const steps = [
   {
     icon: Lightbulb,
     title: '1. Describe your idea',
-    description: 'Input a rough title and description. "Add a dark mode to the settings page" is enough to start.'
+    description: 'Input a rough title and description to start.'
   },
   {
     icon: Pencil,
