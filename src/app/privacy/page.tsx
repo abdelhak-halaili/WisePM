@@ -60,7 +60,7 @@ export default function PrivacyPage() {
 
             <h2>6. Contact Us</h2>
             <p>
-              If you have any questions about this privacy policy or our privacy practices, please contact us at support@wisepm.com.
+              If you have any questions about this privacy policy or our privacy practices, please contact us at abdelhak.halaili@gmail.com.
             </p>
           </div>
         </div>

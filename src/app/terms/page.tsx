@@ -52,7 +52,7 @@ export default function TermsPage() {
           <section className="bg-slate-100 p-6 rounded-xl border border-slate-200">
             <h2 className="text-lg font-bold mb-2">Contact Us</h2>
             <p>
-              If you have any questions about these Terms, please contact us at <a href="mailto:support@wisepm.com" className="text-indigo-600 hover:underline">support@wisepm.com</a>.
+              If you have any questions about these Terms, please contact us at <a href="mailto:abdelhak.halaili@gmail.com" className="text-indigo-600 hover:underline">abdelhak.halaili@gmail.com</a>.
             </p>
           </section>
         </div>
