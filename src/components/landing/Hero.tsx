@@ -39,7 +39,18 @@ export default function Hero() {
           </Link>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm font-medium text-slate-500">
+        <div className="relative mx-auto max-w-5xl mt-16 group">
+          <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000 group-hover:duration-200"></div>
+          <div className="relative rounded-2xl bg-slate-900/5 p-2 ring-1 ring-inset ring-slate-900/10 lg:-m-4 lg:rounded-3xl lg:p-4">
+             <img 
+               src="/hero-screenshot.png" 
+               alt="WisePM Dashboard Interface" 
+               className="rounded-xl shadow-2xl ring-1 ring-slate-900/10 w-full"
+             />
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm font-medium text-slate-500 mt-16">
            <span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-500" /> No credit card required</span>
            <span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-500" /> Free 5 AI generations/mo</span>
            <span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-500" /> Cancel anytime</span>
