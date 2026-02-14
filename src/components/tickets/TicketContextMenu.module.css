@@ -1,0 +1,102 @@
+.menuContainer {
+  position: relative;
+}
+
+.menuTrigger {
+  background: transparent;
+  border: none;
+  padding: 0.25rem;
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.menuTrigger:hover {
+  background: var(--surface-hover);
+  color: var(--foreground);
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  min-width: 200px;
+  z-index: 50;
+  overflow: hidden;
+  animation: slideDown 0.1s ease-out;
+}
+
+.menuItem {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  font-size: 0.9rem;
+  color: var(--foreground);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.1s;
+}
+
+.menuItem:hover {
+  background: var(--surface-hover);
+}
+
+.menuItem.danger {
+  color: var(--destructive);
+}
+
+.separator {
+  height: 1px;
+  background: var(--border);
+  margin: 0;
+}
+
+.projectList {
+  max-height: 200px;
+  overflow-y: auto;
+  border-top: 1px solid var(--border);
+  background: var(--surface-hover);
+}
+
+.projectItem {
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 1rem 0.5rem 2rem;
+  background: transparent;
+  border: none;
+  font-size: 0.85rem;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.projectItem:hover {
+  background: var(--surface);
+  color: var(--foreground);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}

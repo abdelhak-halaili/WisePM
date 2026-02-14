@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// User profile linked to Supabase Auth
+model UserProfile {
+  id        String   @id // Matches Supabase Auth ID
+  email     String   @unique
+  fullName  String?
+  avatarUrl String?
+  
+  workflows Workflow[]
+  documents Document[]
+  tickets   Ticket[]
+  projects  Project[]
+  integrations Integration[]
+  subscription Subscription?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("profiles")
+}
+
+/// A guided product management workflow (e.g., "PRD Writing")
+model Workflow {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  status      String   @default("draft") // draft, in-progress, completed
+  
+  // JSONB field to store flexible workflow steps/data
+  steps       Json     @default("[]") 
+  
+  userId      String
+  user        UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  documents   Document[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("workflows")
+}
+
+/// Generated output from a workflow
+model Document {
+  id          String   @id @default(uuid())
+  title       String
+  content     String   // Markdown content
+  
+  workflowId  String?
+  workflow    Workflow? @relation(fields: [workflowId], references: [id])
+  
+  userId      String
+  user        UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("documents")
+}
+
+/// AI Generated Tickets
+model Ticket {
+  id              String   @id @default(uuid())
+  title           String
+  type            String   // Feature, Bug, etc.
+  status          String   @default("draft") // draft, saved
+  
+  content         String   // The core markdown content
+  missingElements String?  // AI feedback/critique
+  
+  // Metadata for context (platforms, formats, screenshots?)
+  metadata        Json     @default("{}")
+
+  userId          String
+  user            UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Project Relation (Optional for now)
+  projectId       String?
+  project         Project?    @relation(fields: [projectId], references: [id])
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("tickets")
+}
+
+/// Project / Folder for organizing tickets
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  color       String?  // Hex color code for UI
+  description String?
+
+  userId      String
+  user        UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  tickets     Ticket[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("projects")
+}
+
+/// External Integrations (Jira, GitHub, etc.)
+model Integration {
+  id           String   @id @default(uuid())
+  provider     String   // "jira"
+  accessToken  String
+  refreshToken String?
+  cloudId      String?  // Jira Cloud ID (Site ID)
+  expiresAt    Int?     // Timestamp when token expires
+
+  userId       String
+  user         UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([userId, provider]) // One integration per provider per user
+  @@map("integrations")
+}
+
+model Subscription {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  lemonSqueezyId  String   @unique // The subscription ID from Lemon Squeezy
+  orderId         String   @unique
+  status          String   // active, past_due, unpaid, cancelled, expired
+  variantId       String   // To know which plan they are on (monthly/yearly)
+  renewsAt        DateTime?
+  endsAt          DateTime?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("subscriptions")
+}
