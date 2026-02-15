@@ -31,8 +31,17 @@ export async function signup(formData: FormData) {
   const origin = (await headers()).get('origin')
 
   const data = {
-    email: formData.get('email') as string,
+    email: (formData.get('email') as string).toLowerCase(),
     password: formData.get('password') as string,
+  }
+
+  // Check if user already exists in DB (Bypass Supabase Enumeration protection)
+  const existingUser = await prisma.userProfile.findUnique({
+    where: { email: data.email }
+  })
+
+  if (existingUser) {
+    return redirect(`/login?mode=signup&error=User already registered`)
   }
 
   const { error, data: authData } = await supabase.auth.signUp({
