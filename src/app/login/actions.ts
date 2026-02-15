@@ -45,6 +45,8 @@ export async function signup(formData: FormData) {
     }
   })
 
+
+
   if (existingUser) {
     return redirect(`/login?mode=signup&error=User already registered`)
   }
