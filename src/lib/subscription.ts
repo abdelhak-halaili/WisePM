@@ -4,6 +4,11 @@ import { cache } from 'react';
 // Use React cache to dedup requests in RSC
 export const checkSubscription = cache(async (userId: string) => {
   if (!userId) return false;
+
+  // FREE PRO IN PRODUCTION (Hide Payment)
+  if (process.env.NODE_ENV === 'production') {
+      return true;
+  }
   
   try {
       // 0. Admin Bypass

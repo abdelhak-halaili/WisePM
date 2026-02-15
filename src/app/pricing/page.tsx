@@ -4,7 +4,13 @@ import PricingClient from './PricingClient';
 
 import Sidebar from '@/components/Sidebar';
 
+import { redirect } from 'next/navigation';
+
 export default async function PricingPage() {
+  if (process.env.NODE_ENV === 'production') {
+    redirect('/dashboard');
+  }
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const isPro = user ? await checkSubscription(user.id) : false;

@@ -78,7 +78,8 @@ export default function Sidebar({ isPro = false }: SidebarProps) {
       </nav>
 
       <div className={styles.footer}>
-        {isPro ? (
+        {process.env.NODE_ENV === 'development' && (
+          isPro ? (
             <Link 
             href="/pricing"
             className={`${styles.link} mb-4 text-emerald-600 hover:text-emerald-700 bg-emerald-50 rounded-lg`}
@@ -90,7 +91,7 @@ export default function Sidebar({ isPro = false }: SidebarProps) {
                 <span className="font-semibold">Pro Plan Active</span>
             </div>
             </Link>
-        ) : (
+          ) : (
             <Link 
             href="/pricing" 
             className={`${styles.link} mb-4 text-amber-600 hover:text-amber-700 bg-amber-50 rounded-lg`}
@@ -102,6 +103,7 @@ export default function Sidebar({ isPro = false }: SidebarProps) {
                 <span className="font-semibold">Upgrade Plan</span>
             </div>
             </Link>
+          )
         )}
 
         <button onClick={handleSignOut} className={styles.signOut}>
