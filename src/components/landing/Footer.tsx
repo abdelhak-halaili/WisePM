@@ -8,10 +8,7 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div className="col-span-1 md:col-span-2">
             <Link href="/" className="inline-block mb-4">
-              <div className="flex items-center gap-2">
-                <img src="/logo.png" alt="WisePM Logo" className="h-8 w-auto" />
-                <span className="font-bold text-2xl text-white">WisePM</span>
-              </div>
+                <span className="font-semibold text-2xl tracking-tight text-white">Wise<span className="font-bold text-yellow-400">PM</span></span>
             </Link>
             <p className="max-w-xs text-sm">
               The AI-powered copilot for product managers. Structuring chaos, one ticket at a time.

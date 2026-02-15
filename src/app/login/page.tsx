@@ -17,7 +17,7 @@ export default async function LoginPage({
       <div className={styles.card}>
         <div className={styles.header}>
           <div className={styles.logo}>
-            <Fingerprint size={32} />
+            <span className="font-semibold text-3xl tracking-tight text-white">Wise<span className="font-bold text-yellow-500">PM</span></span>
           </div>
           <h1 className={styles.title}>
             {isLogin ? 'Welcome to WisePM' : 'Create an account'}

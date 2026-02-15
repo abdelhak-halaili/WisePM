@@ -23,15 +23,9 @@
 }
 
 .logo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  background: var(--surface-hover);
-  border-radius: var(--radius-md);
-  color: var(--primary);
+  display: inline-block;
   margin-bottom: 1rem;
+  color: var(--foreground);
 }
 
 .title {

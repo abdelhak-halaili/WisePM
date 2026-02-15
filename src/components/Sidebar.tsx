@@ -40,7 +40,9 @@ export default function Sidebar({ isPro = false }: SidebarProps) {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.header}>
-        <img src="/logo.svg" alt="WisePM Logo" className={styles.logo} />
+        <div className={styles.logo}>
+          <span className="font-semibold text-3xl tracking-tight text-white">Wise<span className="font-bold text-yellow-400">PM</span></span>
+        </div>
       </div>
 
       {/* Removed "New Workflow" button as Ticket Generator is the main action now */}
