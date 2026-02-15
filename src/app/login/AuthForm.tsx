@@ -62,7 +62,7 @@ export default function AuthForm({ mode, error, message }: AuthFormProps) {
                         </Link>
                     )}
                 </div>
-                <div className="relative">
+                <div style={{ position: 'relative' }}>
                   <input 
                   id="password" 
                   name="password" 
@@ -76,7 +76,16 @@ export default function AuthForm({ mode, error, message }: AuthFormProps) {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200"
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#9ca3af', // gray-400
+                    }}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -87,7 +96,7 @@ export default function AuthForm({ mode, error, message }: AuthFormProps) {
           {isSignup && (
             <div className={styles.inputGroup}>
               <label htmlFor="confirmPassword" className={styles.label}>Confirm Password</label>
-              <div className="relative">
+              <div style={{ position: 'relative' }}>
                 <input 
                   id="confirmPassword" 
                   name="confirmPassword" 
@@ -101,7 +110,16 @@ export default function AuthForm({ mode, error, message }: AuthFormProps) {
                 <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200"
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#9ca3af', // gray-400
+                    }}
                   >
                     {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
