@@ -33,6 +33,11 @@ export async function signup(formData: FormData) {
   const data = {
     email: (formData.get('email') as string).toLowerCase(),
     password: formData.get('password') as string,
+    confirmPassword: formData.get('confirmPassword') as string,
+  }
+
+  if (data.password !== data.confirmPassword) {
+    return redirect(`/login?mode=signup&error=Passwords do not match`)
   }
 
   // Check if user already exists in DB (Bypass Supabase Enumeration protection)

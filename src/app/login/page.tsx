@@ -69,6 +69,21 @@ export default async function LoginPage({
             </div>
           )}
 
+          {isSignup && (
+            <div className={styles.inputGroup}>
+              <label htmlFor="confirmPassword" className={styles.label}>Confirm Password</label>
+              <input 
+                id="confirmPassword" 
+                name="confirmPassword" 
+                type="password" 
+                required 
+                className={styles.input} 
+                placeholder="••••••••"
+                minLength={6}
+              />
+            </div>
+          )}
+
           <div className={styles.actions}>
             {isLogin && (
               <button formAction={login} className={styles.buttonPrimary}>
