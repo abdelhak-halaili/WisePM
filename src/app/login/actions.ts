@@ -36,8 +36,13 @@ export async function signup(formData: FormData) {
   }
 
   // Check if user already exists in DB (Bypass Supabase Enumeration protection)
-  const existingUser = await prisma.userProfile.findUnique({
-    where: { email: data.email }
+  const existingUser = await prisma.userProfile.findFirst({
+    where: { 
+      email: {
+        equals: data.email,
+        mode: 'insensitive'
+      }
+    }
   })
 
   if (existingUser) {
