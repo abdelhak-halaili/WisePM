@@ -42,7 +42,10 @@ export async function signup(formData: FormData) {
     },
   })
 
-  // ... error handling ...
+  if (error) {
+    console.error('Signup error:', error)
+    return redirect(`/login?mode=signup&error=${encodeURIComponent(error.message)}`)
+  }
 
   // Create Profile in Database (same as before)
   if (authData.user) {
