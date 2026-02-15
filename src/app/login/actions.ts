@@ -79,7 +79,7 @@ export async function signup(formData: FormData) {
   }
 
   if (authData?.user && !authData.session) {
-    redirect('/login?message=Signup successful! Please check your email and click the confirmation link to access the dashboard.')
+    redirect('/login?message=Signup successful! Please check your email (including spam/junk folder) to confirm your account.')
   }
 
   revalidatePath('/', 'layout')
@@ -99,5 +99,5 @@ export async function forgotPassword(formData: FormData) {
     return redirect(`/login?mode=forgot&error=${encodeURIComponent(error.message)}`)
   }
 
-  return redirect(`/login?mode=forgot&message=Check your email for the password reset link.`)
+  return redirect(`/login?mode=forgot&message=Check your email (including spam/junk folder) for the password reset link.`)
 }

@@ -124,8 +124,9 @@
 }
 
 .message {
-  color: var(--primary);
+  color: #16a34a; /* Green-600 */
   font-size: 0.875rem;
   text-align: center;
   margin-top: 0.5rem;
+  font-weight: 500;
 }
