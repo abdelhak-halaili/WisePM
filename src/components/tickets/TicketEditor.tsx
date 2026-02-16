@@ -170,7 +170,13 @@ export default function TicketEditor({ ticket }: TicketEditorProps) {
                         <div style={{ display: 'flex', gap: '0.25rem' }}>
                              <button 
                                  className={styles.iconOnlyBtn}
-                                 onClick={() => setIsEditing(!isEditing)}
+                                 onClick={() => {
+                                     if (isEditing) {
+                                         handleSaveChanges();
+                                     } else {
+                                         setIsEditing(true);
+                                     }
+                                 }}
                                  title={isEditing ? 'Finish Editing' : 'Edit Manually'}
                                  style={isEditing ? { color: 'var(--primary)', background: 'var(--primary-low-opacity)' } : {}}
                              >
