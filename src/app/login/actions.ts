@@ -28,7 +28,9 @@ import { headers } from 'next/headers'
 
 export async function signup(formData: FormData) {
   const supabase = await createClient()
-  const origin = (await headers()).get('origin')
+  const headersList = await headers()
+  const origin = headersList.get('origin')
+  const baseUrl = origin || getURL()
 
   const data = {
     email: (formData.get('email') as string).toLowerCase(),
@@ -59,7 +61,7 @@ export async function signup(formData: FormData) {
   const { error, data: authData } = await supabase.auth.signUp({
     ...data,
     options: {
-      emailRedirectTo: `${origin}/auth/callback`,
+      emailRedirectTo: `${baseUrl}/auth/callback`,
     },
   })
 
