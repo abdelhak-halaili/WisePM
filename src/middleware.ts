@@ -60,9 +60,12 @@ export async function middleware(request: NextRequest) {
   }
 
   // Redirect authenticated users away from login/auth pages AND root landing page
+  // EXCEPTION: Allow access to /auth/callback (needed heavily for flow) and /auth/update-password
   if (user && (
     request.nextUrl.pathname.startsWith("/login") || 
-    request.nextUrl.pathname.startsWith("/auth") ||
+    (request.nextUrl.pathname.startsWith("/auth") && 
+     !request.nextUrl.pathname.startsWith("/auth/callback") && 
+     !request.nextUrl.pathname.startsWith("/auth/update-password")) ||
     request.nextUrl.pathname === "/"
   )) {
     const url = request.nextUrl.clone();

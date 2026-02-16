@@ -111,8 +111,14 @@ export async function forgotPassword(formData: FormData) {
   }
 
   // 2. Send Reset Email (Redirect to specialized Update Password page)
+  const redirectUrl = `${origin}/auth/callback?next=/auth/update-password`
+  console.log('--- Forgot Password Debug ---')
+  console.log('Origin:', origin)
+  console.log('Generated Redirect URL:', redirectUrl)
+  console.log('-----------------------------')
+
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?next=/auth/update-password`,
+    redirectTo: redirectUrl,
   })
 
   if (error) {
