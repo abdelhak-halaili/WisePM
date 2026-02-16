@@ -32,6 +32,14 @@ export async function signup(formData: FormData) {
   const origin = headersList.get('origin')
   const baseUrl = origin || getURL()
 
+  console.log('--- SIGNUP DEBUG ---')
+  console.log('Origin Header:', origin)
+  console.log('Env SITE_URL:', process.env.NEXT_PUBLIC_SITE_URL)
+  console.log('Env VERCEL_URL:', process.env.NEXT_PUBLIC_VERCEL_URL)
+  console.log('Resolved Base URL:', baseUrl)
+  console.log('Redirect Target:', `${baseUrl}/auth/callback`)
+  console.log('--------------------')
+
   const data = {
     email: (formData.get('email') as string).toLowerCase(),
     password: formData.get('password') as string,
