@@ -91,9 +91,14 @@ export async function signup(formData: FormData) {
   redirect('/dashboard')
 }
 
+import { getURL } from '@/utils/get-url'
+
+// ...
+
 export async function forgotPassword(formData: FormData) {
   const supabase = await createClient()
-  const origin = (await headers()).get('origin')
+  // Remove origin entirely as we use getURL()
+  // const origin = (await headers()).get('origin') 
   const email = (formData.get('email') as string).toLowerCase()
 
   // 1. Check if user exists first
@@ -110,9 +115,13 @@ export async function forgotPassword(formData: FormData) {
     return redirect(`/login?mode=forgot&error=No account found with this email address.`)
   }
 
-  // 2. Send Reset Email (Redirect to specialized Update Password page)
+  // 2. Send Reset Email 
+  // Use robust getURL() helper instead of origin header which may be localhost in proxied/containerized envs
+  const baseUrl = getURL()
+  const redirectUrl = `${baseUrl}/auth/callback?next=/auth/update-password`
+
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?next=/auth/update-password`,
+    redirectTo: redirectUrl,
   })
 
   if (error) {
