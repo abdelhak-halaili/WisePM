@@ -186,6 +186,7 @@
   font-size: 0.875rem;
   line-height: 1.5;
   display: -webkit-box;
+  line-clamp: 3;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
@@ -247,11 +248,34 @@
   color: var(--foreground);
 }
 
-.projectCountBadge {
-    background: var(--surface-hover);
-    color: var(--muted);
-    font-size: 0.75rem;
-    padding: 0.1rem 0.4rem;
-    border-radius: 99px;
-    border: 1px solid var(--border);
+/* Mobile Responsiveness */
+@media (max-width: 640px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .createBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .grid, .projectGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
+

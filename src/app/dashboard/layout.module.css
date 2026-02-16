@@ -10,3 +10,12 @@
   padding: 2rem;
   overflow-y: auto;
 }
+
+@media (max-width: 768px) {
+  .main {
+    margin-left: 0;
+    padding: 1rem;
+    padding-top: 4rem; /* Space for the toggle button */
+  }
+}
+

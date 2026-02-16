@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+
+import { useState, useEffect } from 'react'
 import { 
   LayoutDashboard, 
   FileText, 
@@ -9,10 +10,12 @@ import {
   Settings, 
   LogOut, 
   PlusCircle,
-  Search
+  Search,
+  Menu,
+  X
 } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import styles from './Sidebar.module.css'
 
 interface SidebarProps {
@@ -23,6 +26,12 @@ export default function Sidebar({ isPro = false }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
+  const [isOpen, setIsOpen] = useState(false)
+
+  // Close sidebar on route change (mobile)
+  useEffect(() => {
+    setIsOpen(false)
+  }, [pathname])
 
   async function handleSignOut() {
     await supabase.auth.signOut()
@@ -38,79 +47,98 @@ export default function Sidebar({ isPro = false }: SidebarProps) {
   ]
 
   return (
-    <aside className={styles.sidebar}>
-      <div className={styles.header}>
-        <div className={styles.logo}>
-          <span className="font-semibold text-3xl tracking-tight text-white">Wise<span className="font-bold text-yellow-400">PM</span></span>
+    <>
+      {/* Mobile Toggle Button */}
+      <button 
+        className={styles.mobileToggle}
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label="Toggle Menu"
+      >
+        {isOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+
+      {/* Overlay for mobile */}
+      {isOpen && (
+        <div 
+          className={styles.overlay} 
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      <aside className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
+        <div className={styles.header}>
+          <div className={styles.logo}>
+            <span className="font-semibold text-3xl tracking-tight text-white">Wise<span className="font-bold text-yellow-400">PM</span></span>
+          </div>
         </div>
-      </div>
 
-      {/* Removed "New Workflow" button as Ticket Generator is the main action now */}
-      <div className={styles.action}>
-      </div>
+        {/* Removed "New Workflow" button as Ticket Generator is the main action now */}
+        <div className={styles.action}>
+        </div>
 
-      <nav className={styles.nav}>
-        {links.map((link) => {
-          const Icon = link.icon
-          const isActive = pathname === link.href
-          
-          if (link.disabled) {
-             return (
-                <div key={link.name} className={`${styles.link} ${styles.disabled}`}>
-                    <Icon size={20} />
-                    <span>{link.name}</span>
-                    {link.badge && <span className={styles.badge}>{link.badge}</span>}
-                </div>
-             )
-          }
+        <nav className={styles.nav}>
+          {links.map((link) => {
+            const Icon = link.icon
+            const isActive = pathname === link.href
+            
+            if (link.disabled) {
+               return (
+                  <div key={link.name} className={`${styles.link} ${styles.disabled}`}>
+                      <Icon size={20} />
+                      <span>{link.name}</span>
+                      {link.badge && <span className={styles.badge}>{link.badge}</span>}
+                  </div>
+               )
+            }
 
-          return (
-            <Link 
-              key={link.href} 
-              href={link.href} 
-              className={`${styles.link} ${isActive ? styles.active : ''}`}
-            >
-              <Icon size={20} />
-              <span>{link.name}</span>
-            </Link>
-          )
-        })}
-      </nav>
+            return (
+              <Link 
+                key={link.href} 
+                href={link.href} 
+                className={`${styles.link} ${isActive ? styles.active : ''}`}
+              >
+                <Icon size={20} />
+                <span>{link.name}</span>
+              </Link>
+            )
+          })}
+        </nav>
 
-      <div className={styles.footer}>
-        {process.env.NODE_ENV === 'development' && (
-          isPro ? (
-            <Link 
-            href="/pricing"
-            className={`${styles.link} mb-4 text-emerald-600 hover:text-emerald-700 bg-emerald-50 rounded-lg`}
-            >
-            <div className="flex items-center gap-3">
-                <div className="w-5 h-5 flex items-center justify-center rounded-full bg-emerald-100 text-emerald-600 text-xs font-bold">
-                ✓
-                </div>
-                <span className="font-semibold">Pro Plan Active</span>
-            </div>
-            </Link>
-          ) : (
-            <Link 
-            href="/pricing" 
-            className={`${styles.link} mb-4 text-amber-600 hover:text-amber-700 bg-amber-50 rounded-lg`}
-            >
-            <div className="flex items-center gap-3">
-                <div className="w-5 h-5 flex items-center justify-center rounded-full bg-amber-100 text-amber-600 text-xs font-bold">
-                $
-                </div>
-                <span className="font-semibold">Upgrade Plan</span>
-            </div>
-            </Link>
-          )
-        )}
+        <div className={styles.footer}>
+          {process.env.NODE_ENV === 'development' && (
+            isPro ? (
+              <Link 
+              href="/pricing"
+              className={`${styles.link} mb-4 text-emerald-600 hover:text-emerald-700 bg-emerald-50 rounded-lg`}
+              >
+              <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 flex items-center justify-center rounded-full bg-emerald-100 text-emerald-600 text-xs font-bold">
+                  ✓
+                  </div>
+                  <span className="font-semibold">Pro Plan Active</span>
+              </div>
+              </Link>
+            ) : (
+              <Link 
+              href="/pricing" 
+              className={`${styles.link} mb-4 text-amber-600 hover:text-amber-700 bg-amber-50 rounded-lg`}
+              >
+              <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 flex items-center justify-center rounded-full bg-amber-100 text-amber-600 text-xs font-bold">
+                  $
+                  </div>
+                  <span className="font-semibold">Upgrade Plan</span>
+              </div>
+              </Link>
+            )
+          )}
 
-        <button onClick={handleSignOut} className={styles.signOut}>
-          <LogOut size={18} />
-          <span>Sign Out</span>
-        </button>
-      </div>
-    </aside>
+          <button onClick={handleSignOut} className={styles.signOut}>
+            <LogOut size={18} />
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </aside>
+    </>
   )
 }
