@@ -96,8 +96,23 @@ export async function forgotPassword(formData: FormData) {
   const origin = (await headers()).get('origin')
   const email = (formData.get('email') as string).toLowerCase()
 
+  // 1. Check if user exists first
+  const existingUser = await prisma.userProfile.findFirst({
+    where: { 
+      email: {
+        equals: email,
+        mode: 'insensitive'
+      }
+    }
+  })
+
+  if (!existingUser) {
+    return redirect(`/login?mode=forgot&error=No account found with this email address.`)
+  }
+
+  // 2. Send Reset Email (Redirect to specialized Update Password page)
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?next=/dashboard/settings`,
+    redirectTo: `${origin}/auth/callback?next=/auth/update-password`,
   })
 
   if (error) {
