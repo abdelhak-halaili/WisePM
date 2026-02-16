@@ -740,6 +740,32 @@
   margin: 3rem 0;
 }
 
+.markdownBody pre {
+  background: var(--surface-hover);
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  white-space: pre-wrap; /* Force wrapping for Gherkin/Code */
+  word-wrap: break-word;
+  border: 1px solid var(--border);
+  margin-bottom: 1em;
+}
+
+.markdownBody code {
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-size: 0.875rem;
+  background: var(--surface-hover);
+  padding: 0.2em 0.4em;
+  border-radius: var(--radius-sm);
+}
+
+.markdownBody pre code {
+  background: transparent;
+  padding: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 .thumbnail {
   float: right;
   clear: right;
