@@ -116,8 +116,13 @@ export async function forgotPassword(formData: FormData) {
   }
 
   // 2. Send Reset Email 
-  // Use robust getURL() helper instead of origin header which may be localhost in proxied/containerized envs
-  const baseUrl = getURL()
+  // Dynamic URL Resolution:
+  // 1. Try 'origin' header (Standard for POST)
+  // 2. Fallback to getURL() (Env vars)
+  const headersList = await headers()
+  const origin = headersList.get('origin')
+  
+  const baseUrl = origin || getURL()
   const redirectUrl = `${baseUrl}/auth/callback?next=/auth/update-password`
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
