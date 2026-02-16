@@ -1,27 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
+import { Paddle, EventName } from '@paddle/paddle-node-sdk';
 import prisma from '@/lib/prisma';
 
-// Verify Paddle Signature
-function verifyPaddleSignature(req: NextRequest, body: string) {
-    const signature = req.headers.get('paddle-signature');
-    if (!signature) return false;
-
-    // Paddle signature verification logic is complex (involves retrieving public key or shared secret)
-    // For V2 webhooks, it's simpler with a secret key HMAC
-    // BUT Paddle Billing uses a new signature verification method.
-    // For MVP/Test, we will skip strict verification or use a simple secret check if possible.
-    // NOTE: In production, use the official Paddle Node SDK to verify events.
-    
-    return true; 
-}
+const paddle = new Paddle(process.env.PADDLE_API_KEY || '');
 
 export async function POST(req: NextRequest) {
-    try {
-        const signature = req.headers.get('paddle-signature');
-        // if (!signature) return NextResponse.json({ error: 'Missing signature' }, { status: 401 });
+    const signature = req.headers.get('paddle-signature');
+    if (!signature) {
+        return NextResponse.json({ error: 'Missing signature' }, { status: 401 });
+    }
 
-        const body = await req.json();
+    // Get raw body for verification
+    const bodyText = await req.text();
+    const secret = process.env.PADDLE_WEBHOOK_SECRET || '';
+
+    if (!secret) {
+        console.error('PADDLE_WEBHOOK_SECRET is not set');
+        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+    }
+
+    try {
+        if (!paddle.webhooks.unmarshal(bodyText, secret, signature)) {
+             return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+        }
+    } catch (e) {
+        console.error('Webhook verification failed:', e);
+        return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+    }
+
+    try {
+        // Parse JSON after verification (safe)
+        const body = JSON.parse(bodyText);
         const eventType = body.event_type;
         const data = body.data;
 
@@ -33,14 +42,8 @@ export async function POST(req: NextRequest) {
             const priceId = data.items[0].price.id;
             const customData = data.custom_data; // This is where we passed userId!
             
-            // Note: Paddle standard checkout might pass custom data differently or require "Transaction" event first.
-            // Check "transaction.completed" often has the custom_data better.
-            
             let userId = customData?.userId;
 
-            // If userId is missing in subscription event, we might need to look it up via customerId if we saved it before
-            // OR handle 'transaction.completed' which usually has the pass-through.
-            
             if (userId) {
                  await prisma.subscription.upsert({
                     where: { userId: userId },
