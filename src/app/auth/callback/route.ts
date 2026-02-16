@@ -7,12 +7,6 @@ export async function GET(request: Request) {
   // if "next" is in param, use it as the redirect URL
   const next = searchParams.get("next") ?? "/dashboard";
 
-  console.log('--- Auth Callback Debug ---')
-  console.log('Full URL:', request.url)
-  console.log('Next Param:', next)
-  console.log('Code:', code ? 'Present' : 'Missing')
-  console.log('---------------------------')
-
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
