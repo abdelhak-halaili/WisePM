@@ -9,34 +9,34 @@ ALTER TABLE "subscriptions" ENABLE ROW LEVEL SECURITY;
 
 -- Profiles
 CREATE POLICY "Users can view own profile" ON "profiles"
-  FOR SELECT USING (auth.uid() = id);
+  FOR SELECT USING (auth.uid()::text = id);
 
 CREATE POLICY "Users can update own profile" ON "profiles"
-  FOR UPDATE USING (auth.uid() = id);
+  FOR UPDATE USING (auth.uid()::text = id);
 
 CREATE POLICY "Users can insert own profile" ON "profiles"
-  FOR INSERT WITH CHECK (auth.uid() = id);
+  FOR INSERT WITH CHECK (auth.uid()::text = id);
 
 -- Workflows
 CREATE POLICY "Users can CRUD own workflows" ON "workflows"
-  FOR ALL USING (auth.uid() = "userId");
+  FOR ALL USING (auth.uid()::text = "userId");
 
 -- Documents
 CREATE POLICY "Users can CRUD own documents" ON "documents"
-  FOR ALL USING (auth.uid() = "userId");
+  FOR ALL USING (auth.uid()::text = "userId");
 
 -- Tickets
 CREATE POLICY "Users can CRUD own tickets" ON "tickets"
-  FOR ALL USING (auth.uid() = "userId");
+  FOR ALL USING (auth.uid()::text = "userId");
 
 -- Projects
 CREATE POLICY "Users can CRUD own projects" ON "projects"
-  FOR ALL USING (auth.uid() = "userId");
+  FOR ALL USING (auth.uid()::text = "userId");
 
 -- Integrations
 CREATE POLICY "Users can CRUD own integrations" ON "integrations"
-  FOR ALL USING (auth.uid() = "userId");
+  FOR ALL USING (auth.uid()::text = "userId");
 
 -- Subscriptions
 CREATE POLICY "Users can view own subscription" ON "subscriptions"
-  FOR SELECT USING (auth.uid() = "userId");
+  FOR SELECT USING (auth.uid()::text = "userId");

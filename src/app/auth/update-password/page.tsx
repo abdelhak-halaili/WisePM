@@ -3,13 +3,14 @@ import { updatePassword } from './actions'
 import styles from '@/app/login/page.module.css'
 import { KeyRound, ArrowRight } from 'lucide-react'
 
-export default function UpdatePasswordPage({
+export default async function UpdatePasswordPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const error = searchParams.error as string | undefined
-  const message = searchParams.message as string | undefined
+  const params = await searchParams
+  const error = params.error as string | undefined
+  const message = params.message as string | undefined
 
   return (
     <div className={styles.container}>

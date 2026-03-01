@@ -1,13 +1,14 @@
 import Link from 'next/link'
 import { AlertCircle } from 'lucide-react'
 
-export default function AuthErrorPage({
+export default async function AuthErrorPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const error = searchParams.error_description || "Authentication failed"
-  const code = searchParams.error_code
+  const params = await searchParams
+  const error = params.error_description || "Authentication failed"
+  const code = params.error_code
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4">

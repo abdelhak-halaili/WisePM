@@ -10,6 +10,7 @@ import { generateTicketAction, reformTextAction, saveTicketAction, refineTicketA
 import { listJiraProjects, listJiraIssueTypes, createIssueInJira } from '@/app/actions/jira'
 import JiraExportModal from './JiraExportModal'
 import TicketMainPanel from './TicketMainPanel'
+import { createClient } from '@/utils/supabase/client'
 import LimitModal from './LimitModal'
 import { 
   ArrowRight, 
@@ -431,54 +432,73 @@ export default function TicketWizard() {
     if (!generatedResult) return
     setIsSaving(true)
     
-    // Embed images permanently into the content for saving
     let finalContent = generatedResult.coreContent;
-    console.log('Original Content:', finalContent.substring(0, 100));
-    console.log('Screenshots:', formData.screenshots);
 
     try {
-        const base64Images = await Promise.all(formData.screenshots.map(async (shot) => {
-            if (!shot.file) {
-                console.warn('Screenshot missing file:', shot);
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+            alert("Please log in to save.");
+            setIsSaving(false);
+            return;
+        }
+
+        const uploadedImages = await Promise.all(formData.screenshots.map(async (shot) => {
+            if (!shot.file) return null;
+            
+            const fileExt = shot.file.name.split('.').pop();
+            const fileName = `${user.id}/${Math.random().toString(36).substring(2)}.${fileExt}`;
+            
+            const { error: uploadError } = await supabase.storage
+                .from('ticket-assets')
+                .upload(fileName, shot.file);
+
+            if (uploadError) {
+                console.error('Upload failed:', uploadError);
                 return null;
             }
-            return new Promise<string>((resolve) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result as string);
-                reader.readAsDataURL(shot.file!);
-            });
+            
+            const { data: { publicUrl } } = supabase.storage
+                .from('ticket-assets')
+                .getPublicUrl(fileName);
+                
+            return {
+                ...shot,
+                publicUrl
+            };
         }));
         
-        console.log('Base64 Images generated:', base64Images.length);
-
         finalContent = finalContent.replace(
             /\[\[(?:\s*(?:SCREEN|Screen|Image|img)\s*[_-\s]?)?(\d+)\s*\]\]/gi, 
             (match, index) => {
                 const i = parseInt(index);
-                const imgData = base64Images[i] || base64Images[i - 1]; // Try exact match or 1-based fallback
-                const shot = formData.screenshots[i] || formData.screenshots[i - 1]; // Same fallback
+                const shot = uploadedImages[i] || uploadedImages[i - 1]; 
                 
-                console.log(`Replacing ${match} with image index ${i}`);
-                if (imgData && shot) {
-                   // Remove spaces to ensure valid Markdown link parsing
-                   return `\n![${shot.description || `Screenshot ${i}`}](${imgData.trim()})\n`;
+                if (shot && shot.publicUrl) {
+                   return `\n![${shot.description || `Screenshot ${i}`}](${shot.publicUrl})\n`;
                 }
-                console.warn(`No image found for index ${i}`);
                 return `\n> [Missing Image #${index}]\n`;
             }
         );
-        console.log('Final Content Length:', finalContent.length);
     } catch (e) {
-        console.error("Failed to embed images", e);
+        console.error("Failed to upload images", e);
+        setIsSaving(false);
+        alert("Failed to upload images. Check your connection.");
+        return;
     }
     
     const result = await saveTicketAction({
         title: generatedResult.title,
         type: generatedResult.type,
-        content: generatedResult.coreContent,
+        content: finalContent,
         missingElements: generatedResult.missingElements,
         status: "saved",
-        metadata: formData,
+        metadata: {
+            ...formData,
+            // Don't save the raw file or preview URL in metadata, just the descriptions/IDs
+            screenshots: formData.screenshots.map(s => ({ id: s.id, description: s.description }))
+        },
         projectId: selectedProjectId || undefined
     })
     
