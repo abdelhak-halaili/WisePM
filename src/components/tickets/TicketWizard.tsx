@@ -779,7 +779,7 @@ export default function TicketWizard() {
                     <button className={styles.buttonSecondary} onClick={() => setStep(4)}>Back to Setup</button>
                     <button 
                         className={styles.buttonPrimary} 
-                        onClick={handleSave}
+                        onClick={() => handleSave()}
                         disabled={isSaving}
                     >
                         {isSaving ? <Loader2 size={16} className={styles.spin} /> : <Check size={16} />}
