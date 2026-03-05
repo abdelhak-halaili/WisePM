@@ -195,12 +195,35 @@ export async function generateTicketAction(formData: FormData) {
        
        ` : `
        **FUNCTIONAL TICKET STRUCTURE**:
-       - **User Stories** or **Gherkin Scenarios** (based on request).
-       - **Acceptance Criteria**.
+       You MUST ONLY generate the following sections. If a section is not listed below, DO NOT include it.
+
+       ${formats.includes('user_stories') ? `
+       ### 1. User Stories
+       - Format: "As a [user], I want [feature] so that [benefit]".
+       ` : ''}
+
+       ${formats.includes('acceptance') ? `
+       ### 2. Acceptance Criteria
+       - Detailed checklist of requirements for QA.
+       - Focus on functional correctness.
+       ` : ''}
+
+       ${formats.includes('gherkin') ? `
+       ### 3. Gherkin Scenarios
+       - Provide strict Given / When / Then scenarios for the main flows.
+       ` : ''}
+
+       ${formats.includes('tracking') ? `
+       ### 4. Event Tracking (Analytics)
+       - Define the specific events and properties to be tracked.
+       - **Format**: 
+         - **Event Name**: [Snake Case]
+         - **Trigger**: [When it happens]
+         - **Properties**: [Key/Value details]
+       ` : ''}
+
+       **STRICT CONSTRAINT**: The user ONLY wants the sections explicitly defined above based on their selection (${formats}). If "user_stories" is not in this list, you MUST NOT generate a "User Stories" section. Same for all other sections.
        - Focus on the *What* and *Why*, not the *How*.
-       ${formats.includes('Gherkin') 
-          ? "Provide a Unified Story followed by strict Given/When/Then scenarios." 
-          : "Provide a comprehensive list of User Stories."}
        `}
        
        - Use standard Markdown headers (#, ##, ###).

@@ -20,9 +20,11 @@ interface JiraExportModalProps {
     type: string
     coreContent: string // The description/content
   }
+  onSave?: () => Promise<boolean>
+  isSaving?: boolean
 }
 
-export default function JiraExportModal({ isOpen, onClose, ticketData }: JiraExportModalProps) {
+export default function JiraExportModal({ isOpen, onClose, ticketData, onSave, isSaving }: JiraExportModalProps) {
     const [projects, setProjects] = useState<any[]>([])
     const [issueTypes, setIssueTypes] = useState<any[]>([])
     const [selectedProject, setSelectedProject] = useState('')
@@ -150,6 +152,18 @@ export default function JiraExportModal({ isOpen, onClose, ticketData }: JiraExp
         }
     }
 
+    const handleSaveAndConnect = async () => {
+        if (onSave) {
+            const success = await onSave();
+            if (success) {
+                // Use window.location for hard redirect to ensure auth flow starts fresh
+                window.location.href = '/dashboard/settings';
+            }
+        } else {
+            window.location.href = '/dashboard/settings';
+        }
+    }
+
     if (!isOpen || !mounted) return null
 
     return createPortal(
@@ -185,10 +199,23 @@ export default function JiraExportModal({ isOpen, onClose, ticketData }: JiraExp
                  {isLoading ? (
                      <div style={{ padding: '2rem', textAlign: 'center' }}><Loader2 className={styles.spin} /> Loading Jira info...</div>
                  ) : error ? (
-                     <div style={{ padding: '1rem', color: 'red' }}>
-                         {error}
-                         <br /><br />
-                         <a href="/dashboard/settings" style={{ textDecoration: 'underline', color: '#0052CC' }}>Go to Settings to Connect</a>
+                     <div style={{ padding: '1rem', textAlign: 'center' }}>
+                         <div style={{ color: '#DE350B', marginBottom: '1.5rem', fontSize: '0.95rem', lineHeight: '1.5' }}>
+                             {error}
+                             <br />
+                             <span style={{ fontSize: '0.85rem', color: '#666', marginTop: '0.5rem', display: 'block' }}>
+                                 We'll save your ticket to WisePM first so you don't lose it.
+                             </span>
+                         </div>
+                         <button 
+                             className={styles.buttonPrimary} 
+                             onClick={handleSaveAndConnect}
+                             disabled={isSaving}
+                             style={{ width: '100%', justifyContent: 'center' }}
+                         >
+                             {isSaving ? <Loader2 className={styles.spin} size={16} /> : <ExternalLink size={16} />}
+                             Save & Connect Jira
+                         </button>
                      </div>
                  ) : (
                      <>
@@ -252,16 +279,18 @@ export default function JiraExportModal({ isOpen, onClose, ticketData }: JiraExp
                  )}
                </div>
 
-               <div className={styles.jiraActions}>
-                 <button className={styles.jiraCancelBtn} onClick={onClose}>Cancel</button>
-                 <button 
-                    className={styles.jiraSaveBtn} 
-                    onClick={handleCreate}
-                    disabled={isCreating || !selectedProject || !selectedType}
-                 >
-                   {isCreating ? <Loader2 className={styles.spin} size={16} /> : 'Create Ticket'}
-                 </button>
-               </div>
+                <div className={styles.jiraActions}>
+                  <button className={styles.jiraCancelBtn} onClick={onClose}>Cancel</button>
+                  {!error && (
+                    <button 
+                        className={styles.jiraSaveBtn} 
+                        onClick={handleCreate}
+                        disabled={isCreating || !selectedProject || !selectedType}
+                    >
+                        {isCreating ? <Loader2 className={styles.spin} size={16} /> : 'Create Ticket'}
+                    </button>
+                  )}
+                </div>
                </>
            )}
         </div>

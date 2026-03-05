@@ -219,3 +219,20 @@ export async function createIssueInJira(ticketData: any, jiraProjectId: string, 
     return { success: false, error: errorMessage };
   }
 }
+
+export async function disconnectJiraAction(formData?: FormData) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Unauthorized');
+
+    await prisma.integration.delete({
+        where: {
+            userId_provider: {
+                userId: user.id,
+                provider: 'jira',
+            }
+        }
+    });
+
+    revalidatePath('/dashboard/settings');
+}

@@ -10,7 +10,9 @@ export async function GET(request: Request) {
   const state = searchParams.get('state'); // Verify state if implemented
 
   if (!code) {
-    return NextResponse.json({ error: 'No code provided' }, { status: 400 });
+    // If user cancels, they are redirected back without a code.
+    // Redirect them back to settings instead of showing a JSON error.
+    return NextResponse.redirect(new URL('/dashboard/settings?error=jira_canceled', request.url));
   }
 
   try {

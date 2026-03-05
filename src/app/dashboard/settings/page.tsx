@@ -1,5 +1,5 @@
 
-import { getJiraIntegrationStatus } from '@/app/actions/jira';
+import { getJiraIntegrationStatus, disconnectJiraAction } from '@/app/actions/jira';
 import Link from 'next/link';
 
 export default async function SettingsPage() {
@@ -21,19 +21,37 @@ export default async function SettingsPage() {
             )}
           </div>
           
-          <Link href="/api/jira/auth" prefetch={false}>
-            <button style={{
-              padding: '0.5rem 1rem',
-              backgroundColor: status?.isConnected ? '#f0f0f0' : '#0052CC',
-              color: status?.isConnected ? '#333' : 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: 500
-            }}>
-              {status?.isConnected ? 'Reconnect Jira' : 'Connect Jira'}
-            </button>
-          </Link>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            {status?.isConnected ? (
+              <form action={disconnectJiraAction}>
+                <button type="submit" style={{
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#fee2e2',
+                  color: '#991b1b',
+                  border: '1px solid #fecaca',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontWeight: 500
+                }}>
+                  Disconnect Jira
+                </button>
+              </form>
+            ) : (
+              <Link href="/api/jira/auth" prefetch={false}>
+                <button style={{
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#0052CC',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontWeight: 500
+                }}>
+                  Connect Jira
+                </button>
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </div>

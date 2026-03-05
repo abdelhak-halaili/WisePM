@@ -428,8 +428,10 @@ export default function TicketWizard() {
   }
 
 
-  const handleSave = async () => {
-    if (!generatedResult) return
+  const [savedTicketId, setSavedTicketId] = useState<string | null>(null)
+
+  const handleSave = async (options: { redirect?: boolean } = { redirect: true }) => {
+    if (!generatedResult) return false
     setIsSaving(true)
     
     let finalContent = generatedResult.coreContent;
@@ -441,7 +443,7 @@ export default function TicketWizard() {
         if (!user) {
             alert("Please log in to save.");
             setIsSaving(false);
-            return;
+            return false;
         }
 
         const uploadedImages = await Promise.all(formData.screenshots.map(async (shot) => {
@@ -485,7 +487,7 @@ export default function TicketWizard() {
         console.error("Failed to upload images", e);
         setIsSaving(false);
         alert("Failed to upload images. Check your connection.");
-        return;
+        return false;
     }
     
     const result = await saveTicketAction({
@@ -504,10 +506,15 @@ export default function TicketWizard() {
     
     setIsSaving(false)
     
-    if (result.success) {
-        router.push('/dashboard/my-tickets') 
+    if (result.success && result.data) {
+        setSavedTicketId(result.data.id)
+        if (options.redirect) {
+            router.push('/dashboard/my-tickets')
+        }
+        return true
     } else {
-        alert('Failed to save ticket: ' + result.error)
+        alert('Failed to save ticket: ' + (result.error || 'Unknown error'))
+        return false
     }
   }
 
@@ -534,16 +541,18 @@ export default function TicketWizard() {
     return (
         <div className={styles.wizardContainerFull}>
              <Lightbox />
-             {generatedResult && (
-                 <JiraExportModal 
-                     isOpen={showJiraModal} 
-                     onClose={() => setShowJiraModal(false)}
-                     ticketData={generatedResult}
-                 />
-             )}
+              {generatedResult && (
+                  <JiraExportModal 
+                      isOpen={showJiraModal} 
+                      onClose={() => setShowJiraModal(false)}
+                      ticketData={generatedResult}
+                      onSave={() => handleSave({ redirect: false })}
+                      isSaving={isSaving}
+                  />
+              )}
              {/* Header */}
-             <div className={styles.resultHeader} style={{ marginBottom: '1rem' }}>
-                  <div>
+             <div className={styles.resultHeader} style={{ marginBottom: '1rem', alignItems: 'flex-start' }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
                       <div className={styles.headerMeta}>
                         <span className={styles.dateBadge}>{new Date().toLocaleDateString()}</span>
                         <span className={styles.stepDivider}>•</span>
@@ -556,9 +565,41 @@ export default function TicketWizard() {
                             <ExternalLink size={14} /> Open in Jira
                         </button>
                       </div>
-                      <h2 className={styles.documentTitle}>{generatedResult.title}</h2>
+                      {isEditing ? (
+                          <input 
+                              type="text"
+                              className={styles.documentTitle}
+                              value={generatedResult.title}
+                              onChange={(e) => setGeneratedResult({ ...generatedResult, title: e.target.value })}
+                              style={{ 
+                                  fontSize: '1.75rem', 
+                                  fontWeight: 700,
+                                  lineHeight: '1.2',
+                                  border: 'none',
+                                  background: 'transparent',
+                                  width: '100%',
+                                  padding: 0,
+                                  margin: 0,
+                                  outline: 'none',
+                                  boxShadow: 'none',
+                                  color: 'inherit',
+                                  fontFamily: 'inherit',
+                                  display: 'block'
+                              }}
+                              placeholder="Ticket Title"
+                              autoFocus
+                              onFocus={(e) => e.target.select()}
+                          />
+                      ) : (
+                          <h2 className={styles.documentTitle} style={{ 
+                              margin: 0, 
+                              fontSize: '1.75rem', 
+                              fontWeight: 700,
+                              lineHeight: '1.2'
+                          }}>{generatedResult.title}</h2>
+                      )}
                   </div>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0, marginLeft: '1rem' }}>
                       <button 
                           className={styles.buttonGhost}
                           onClick={() => setIsEditing(!isEditing)}
@@ -572,14 +613,14 @@ export default function TicketWizard() {
                       >
                           <Copy size={16} /> Copy
                       </button>
-                      <button 
-                          className={styles.buttonPrimary}
-                          onClick={handleSave}
-                          disabled={isSaving}
-                      >
-                          {isSaving ? <Loader2 className="animate-spin" size={16} /> : <Upload size={16} />}
-                          Save Ticket
-                      </button>
+                       <button 
+                           className={savedTicketId ? styles.buttonSecondary : styles.buttonPrimary}
+                           onClick={() => handleSave()}
+                           disabled={isSaving}
+                       >
+                           {isSaving ? <Loader2 className="animate-spin" size={16} /> : (savedTicketId ? <Check size={16} /> : <Upload size={16} />)}
+                           {savedTicketId ? 'Saved' : 'Save Ticket'}
+                       </button>
                   </div>
              </div>
 

@@ -156,7 +156,7 @@ export default function TicketEditor({ ticket }: TicketEditorProps) {
             />
             {/* Header Override for Details View */}
             <header className={styles.resultHeader} style={{ marginBottom: '1rem', alignItems: 'flex-start' }}>
-                 <div>
+                 <div style={{ flex: 1, minWidth: 0 }}>
                     <Link href="/dashboard/my-tickets" className={styles.buttonGhost} style={{ paddingLeft: 0, marginBottom: '0.5rem' }}>
                         <ArrowLeft size={16} /> Back to List
                     </Link>
@@ -165,9 +165,43 @@ export default function TicketEditor({ ticket }: TicketEditorProps) {
                        <span>•</span>
                        <span className={styles.dateBadge} suppressHydrationWarning><Calendar size={12} style={{ marginRight: 4 }}/> {new Date(ticket.createdAt).toLocaleDateString()}</span>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <h2 className={styles.documentTitle} style={{ margin: 0 }}>{currentTicket.title}</h2>
-                        <div style={{ display: 'flex', gap: '0.25rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%' }}>
+                        {isEditing ? (
+                            <input 
+                                type="text"
+                                className={styles.documentTitle}
+                                value={currentTicket.title}
+                                onChange={(e) => setCurrentTicket(prev => ({ ...prev, title: e.target.value }))}
+                                style={{ 
+                                    fontSize: '1.75rem', 
+                                    fontWeight: 700,
+                                    lineHeight: '1.2',
+                                    border: 'none',
+                                    background: 'transparent',
+                                    flex: 1,
+                                    minWidth: 0,
+                                    padding: 0,
+                                    margin: 0,
+                                    outline: 'none',
+                                    boxShadow: 'none',
+                                    color: 'inherit',
+                                    fontFamily: 'inherit'
+                                }}
+                                placeholder="Ticket Title"
+                                autoFocus
+                                onFocus={(e) => e.target.select()}
+                            />
+                        ) : (
+                            <h2 className={styles.documentTitle} style={{ 
+                                margin: 0, 
+                                fontSize: '1.75rem', 
+                                fontWeight: 700,
+                                lineHeight: '1.2',
+                                flex: 1,
+                                minWidth: 0
+                            }}>{currentTicket.title}</h2>
+                        )}
+                        <div style={{ display: 'flex', gap: '0.25rem', flexShrink: 0 }}>
                              <button 
                                  className={styles.iconOnlyBtn}
                                  onClick={() => {

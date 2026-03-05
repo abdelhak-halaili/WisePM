@@ -14,7 +14,7 @@ export default function Icon() {
       // ImageResponse JSX element
       <div
         style={{
-          fontSize: 24,
+          fontSize: 18,
           background: 'black',
           width: '100%',
           height: '100%',
@@ -22,11 +22,11 @@ export default function Icon() {
           alignItems: 'center',
           justifyContent: 'center',
           color: 'white',
-          borderRadius: 8,
-          fontWeight: 700,
+          borderRadius: '50%',
+          fontWeight: 800,
         }}
       >
-        W<span style={{ color: '#facc15' }}>P</span>
+        <span style={{ color: '#facc15' }}>PM</span>
       </div>
     ),
     // ImageResponse options
