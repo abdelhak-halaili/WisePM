@@ -8,12 +8,12 @@ const JIRA_CLOUD_ID_API = process.env.JIRA_CLOUD_ID_API || 'https://api.atlassia
 // Scopes: read:jira-work write:jira-work read:jira-user offline_access
 const SCOPES = 'read:jira-work write:jira-work read:jira-user offline_access';
 
-export const getJiraAuthUrl = () => {
+export const getJiraAuthUrl = (redirectUri: string) => {
   const params = new URLSearchParams({
     audience: 'api.atlassian.com',
     client_id: JIRA_CLIENT_ID,
     scope: SCOPES,
-    redirect_uri: JIRA_REDIRECT_URI,
+    redirect_uri: redirectUri || JIRA_REDIRECT_URI,
     state: 'random_state_string', // In production, use a secure random string and verify it
     response_type: 'code',
     prompt: 'consent',
@@ -22,7 +22,7 @@ export const getJiraAuthUrl = () => {
   return `https://auth.atlassian.com/authorize?${params.toString()}`;
 };
 
-export const exchangeCodeForToken = async (code: string) => {
+export const exchangeCodeForToken = async (code: string, redirectUri: string) => {
   const response = await fetch('https://auth.atlassian.com/oauth/token', {
     method: 'POST',
     headers: {
@@ -33,7 +33,7 @@ export const exchangeCodeForToken = async (code: string) => {
       client_id: JIRA_CLIENT_ID,
       client_secret: JIRA_CLIENT_SECRET,
       code: code,
-      redirect_uri: JIRA_REDIRECT_URI,
+      redirect_uri: redirectUri || JIRA_REDIRECT_URI,
     }),
   });
 

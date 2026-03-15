@@ -16,8 +16,12 @@ export async function GET(request: Request) {
   }
 
   try {
+    // dynamically reconstruct the exact callback URI we are at
+    const origin = new URL(request.url).origin;
+    const redirectUri = `${origin}/api/jira/callback`;
+
     // 1. Exchange code for tokens
-    const tokenData = await exchangeCodeForToken(code);
+    const tokenData = await exchangeCodeForToken(code, redirectUri);
     const { access_token, refresh_token, expires_in } = tokenData;
 
     // 2. Get Cloud ID (Site ID)
