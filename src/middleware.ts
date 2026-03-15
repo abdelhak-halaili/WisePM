@@ -49,6 +49,7 @@ export async function middleware(request: NextRequest) {
     !request.nextUrl.pathname.startsWith("/auth") &&
     !request.nextUrl.pathname.startsWith("/pricing") &&
     !request.nextUrl.pathname.startsWith("/api/webhooks") &&
+    !request.nextUrl.pathname.startsWith("/api/jira") &&
     !request.nextUrl.pathname.startsWith("/terms") &&
     !request.nextUrl.pathname.startsWith("/privacy") &&
     request.nextUrl.pathname !== "/"
